@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>指南針</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        #compass-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            background: radial-gradient(circle, #333 60%, #222);
+        }
+        .needle-body {
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 150px solid red;
+            position: absolute;
+            top: 50px;
+            left: calc(50% - 10px);
+            filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.7));
+            transform-origin: 50% 100%;
+            transform: rotate(0deg);
+            transition: transform 0.1s linear;
+        }
+        .needle-cap {
+            width: 20px;
+            height: 20px;
+            background: #ddd;
+            border: 2px solid #aaa;
+            border-radius: 50%;
+            position: absolute;
+            top: calc(50% - 10px);
+            left: calc(50% - 10px);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .direction-label {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .secondary-label {
+            font-size: 18px;
+            color: #ccc;
+        }
+        .north { top: 50px; left: calc(50% - 12px); }
+        .east { top: calc(50% - 12px); right: 50px; }
+        .south { bottom: 50px; left: calc(50% - 12px); }
+        .west { top: calc(50% - 12px); left: 50px; }
+        .ne { top: 80px; right: 80px; }
+        .se { bottom: 80px; right: 80px; }
+        .sw { bottom: 80px; left: 80px; }
+        .nw { top: 80px; left: 80px; }
+        .tick {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: #aaa;
+            top: 0;
+            left: calc(50% - 1px);
+            transform-origin: 50% 200px;
+        }
+        .minor-tick {
+            position: absolute;
+            width: 1px;
+            height: 10px;
+            background: #777;
+            top: 0;
+            left: calc(50% - 0.5px);
+            transform-origin: 50% 200px;
+        }
+        #current-direction {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="compass-container">
+        <!-- 方位標記 -->
+        <div class="direction-label north">N</div>
+        <div class="direction-label east">E</div>
+        <div class="direction-label south">S</div>
+        <div class="direction-label west">W</div>
+        <div class="direction-label secondary-label ne">NE</div>
+        <div class="direction-label secondary-label se">SE</div>
+        <div class="direction-label secondary-label sw">SW</div>
+        <div class="direction-label secondary-label nw">NW</div>
+
+        <!-- 主刻度線 -->
+        <div class="tick" style="transform: rotate(0deg);"></div>
+        <div class="tick" style="transform: rotate(45deg);"></div>
+        <div class="tick" style="transform: rotate(90deg);"></div>
+        <div class="tick" style="transform: rotate(135deg);"></div>
+        <div class="tick" style="transform: rotate(180deg);"></div>
+        <div class="tick" style="transform: rotate(225deg);"></div>
+        <div class="tick" style="transform: rotate(270deg);"></div>
+        <div class="tick" style="transform: rotate(315deg);"></div>
+
+        <!-- 次要刻度線，每15度一個 -->
+        <div class="minor-tick" style="transform: rotate(15deg);"></div>
+        <div class="minor-tick" style="transform: rotate(30deg);"></div>
+        <div class="minor-tick" style="transform: rotate(60deg);"></div>
+        <div class="minor-tick" style="transform: rotate(75deg);"></div>
+        <div class="minor-tick" style="transform: rotate(105deg);"></div>
+        <div class="minor-tick" style="transform: rotate(120deg);"></div>
+        <div class="minor-tick" style="transform: rotate(150deg);"></div>
+        <div class="minor-tick" style="transform: rotate(165deg);"></div>
+        <div class="minor-tick" style="transform: rotate(195deg);"></div>
+        <div class="minor-tick" style="transform: rotate(210deg);"></div>
+        <div class="minor-tick" style="transform: rotate(240deg);"></div>
+        <div class="minor-tick" style="transform: rotate(255deg);"></div>
+        <div class="minor-tick" style="transform: rotate(285deg);"></div>
+        <div class="minor-tick" style="transform: rotate(300deg);"></div>
+        <div class="minor-tick" style="transform: rotate(330deg);"></div>
+        <div class="minor-tick" style="transform: rotate(345deg);"></div>
+
+        <!-- 指針 -->
+        <div class="needle-body"></div>
+        <div class="needle-cap"></div>
+    </div>
+    <div id="current-direction">N / 0°</div>
+
+    <script>
+        const needleElement = document.querySelector('.needle-body');
+        const currentDirectionElement = document.getElementById('current-direction');
+        let currentAngle = 0;
+
+        function getDirection(angle) {
+            const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+            const index = Math.floor((angle + 22.5) / 45) % 8;
+            return directions[index];
+        }
+
+        function updateNeedle() {
+            needleElement.style.transform = `rotate(${currentAngle}deg)`;
+            const direction = getDirection(currentAngle);
+            currentDirectionElement.textContent = `${direction} / ${currentAngle.toFixed(0)}°`;
+            currentAngle = (currentAngle + 1) % 360; // 模擬角度變化
+        }
+
+        setInterval(updateNeedle, 100); // 每100毫秒更新一次指針
+    </script>
+</body>
+</html>
