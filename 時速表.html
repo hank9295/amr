@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>帶有指針和單位的時速儀表板</title>
+    <title>時速儀表板</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-gauges/gauge.min.js"></script>
     <style>
         body {
@@ -50,14 +50,14 @@
             valueTextShadow: false,
             valueDec: 0, // 設定小數點位數為0，顯示整數
             valueInt: 2, // 數值整數部分的最大位數
-            animationRule: "bounce",
-            animationDuration: 1500
+            animationRule: "dequint", // 使用更平滑的動畫規則
+            animationDuration: 1500, // 增加動畫持續時間，以使指針移動更加流暢
         }).draw();
 
         // 更新顯示數值並附加單位
         function updateGaugeValue(value) {
-            gauge.update({ valueText: value + ' km/h' }); // 更新顯示的數值並附加單位
             gauge.value = value; // 更新指針位置
+            gauge.update({ valueText: value + ' km/h' }); // 顯示數值並附加 "km/h" 單位
         }
 
         // 模擬數據變化
