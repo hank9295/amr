@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帶有指針和單位的時速儀表板</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-gauges/gauge.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gauge" width="400" height="400"></canvas>
+
+    <script>
+        var gauge = new RadialGauge({
+            renderTo: 'gauge',
+            width: 400,
+            height: 400,
+            units: "km/h",
+            minValue: 0,
+            maxValue: 30,
+            majorTicks: ["0", "5", "10", "15", "20", "25", "30"],
+            minorTicks: 4,
+            ticksAngle: 270,
+            startAngle: 45,
+            strokeTicks: true,
+            highlights: [
+                { from: 0, to: 10, color: "rgba(0,255,127,0.75)" }, // 綠色區域
+                { from: 10, to: 20, color: "rgba(255,215,0,0.75)" }, // 黃色區域
+                { from: 20, to: 30, color: "rgba(255,69,0,0.85)" }   // 紅色區域
+            ],
+            colorPlate: "#222",
+            colorMajorTicks: "#f5f5f5",
+            colorMinorTicks: "#ddd",
+            colorTitle: "#fff",
+            colorUnits: "#ccc",
+            colorNumbers: "#eee",
+            colorNeedle: "rgba(240, 128, 128, 1)",
+            colorNeedleEnd: "rgba(255, 160, 122, .9)",
+            valueBox: true,
+            valueTextShadow: false,
+            valueDec: 0, // 設定小數點位數為0，顯示整數
+            valueInt: 2, // 數值整數部分的最大位數
+            animationRule: "bounce",
+            animationDuration: 1500
+        }).draw();
+
+        // 更新顯示數值並附加單位
+        function updateGaugeValue(value) {
+            gauge.update({ valueText: value + ' km/h' }); // 更新顯示的數值並附加單位
+            gauge.value = value; // 更新指針位置
+        }
+
+        // 模擬數據變化
+        setInterval(() => {
+            var randomValue = Math.floor(Math.random() * 31); // 產生0到30之間的隨機整數
+            updateGaugeValue(randomValue); // 更新儀表板的數據
+        }, 2000);
+    </script>
+</body>
+</html>
