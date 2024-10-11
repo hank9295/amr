@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儀表板範例</title>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #gauge {
+            max-width: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="gauge"></div>
+
+    <script>
+        var options = {
+            chart: {
+                type: 'radialBar',
+                offsetY: -20
+            },
+            plotOptions: {
+                radialBar: {
+                    startAngle: -135,
+                    endAngle: 135,
+                    hollow: {
+                        size: '60%',
+                    },
+                    track: {
+                        background: '#333',
+                        strokeWidth: '97%',
+                        margin: 5,
+                    },
+                    dataLabels: {
+                        name: {
+                            fontSize: '22px',
+                            color: '#fff',
+                            offsetY: -10
+                        },
+                        value: {
+                            fontSize: '16px',
+                            color: '#fff',
+                            offsetY: 5,
+                            formatter: function (val) {
+                                return val + " lvl";
+                            }
+                        }
+                    }
+                }
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'dark',
+                    type: 'horizontal',
+                    shadeIntensity: 0.5,
+                    gradientToColors: ['#FDD835', '#FF4560'],
+                    inverseColors: false,
+                    opacityFrom: 1,
+                    opacityTo: 1,
+                    stops: [0, 100]
+                }
+            },
+            stroke: {
+                dashArray: 4
+            },
+            labels: ['Power'],
+            series: [50], // 初始值
+            colors: ['#00E396'],
+        };
+
+        var chart = new ApexCharts(document.querySelector("#gauge"), options);
+        chart.render();
+
+        // 更新儀表板的數據
+        function updateGauge(value) {
+            chart.updateSeries([value]);
+        }
+
+        // 模擬數據變化
+        let level = 0;
+        setInterval(() => {
+            level = (level + 10) % 100; // 模擬數據變化
+            updateGauge(level);
+        }, 1000); // 每秒更新一次
+    </script>
+</body>
+</html>
